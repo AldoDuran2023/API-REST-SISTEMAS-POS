@@ -9,9 +9,11 @@ from routes.detalleCompraRoutes import detalle_compra
 from routes.auth import routes_auth
 from flask_cors import CORS
 from config import DATABASE_CONECCTION_URI
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
-CORS(marcas, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(marcas, resources={r"/*": {"origins": os.environ['URL']}})
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_CONECCTION_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
