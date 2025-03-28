@@ -19,6 +19,7 @@ class Producto(db.Model):
     categoria = db.relationship('Categoria', back_populates='productos') 
     marca = db.relationship('Marca', back_populates='productos')
     detalles = db.relationship('DetalleCompra', back_populates='producto', cascade='all, delete-orphan')
+    detalles_venta = relationship("DetalleVenta", back_populates="producto")  
 
     @property
     def utilidad(self):

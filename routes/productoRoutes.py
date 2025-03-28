@@ -3,6 +3,7 @@ from models.Producto import Producto
 from utils.paginador import paginar_query
 from funtion_jwt import validate_token
 from utils.db import db
+from utils.auth_middleware import role_required
 
 productos = Blueprint('productos', __name__)
 
@@ -12,6 +13,7 @@ def verify_token_middleware():
     return validate_token(token, output=False)
 
 @productos.route('/', methods=['GET'])
+@role_required(["admin"]) 
 def get_categorias_paginated():
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=5, type=int)
@@ -24,6 +26,7 @@ def get_categorias_paginated():
 
 # Ruta para agregar un nuevo producto
 @productos.route('/add', methods=['POST'])
+@role_required(["admin"]) 
 def add_producto():
     data = request.json
 
@@ -76,6 +79,7 @@ def add_producto():
 
 # Seleccionar un producto
 @productos.route('/<int:id>', methods=['GET'])
+@role_required(["admin"]) 
 def get_producto(id):
     producto = Producto.query.get_or_404(id)
     producto_data = {
@@ -98,6 +102,7 @@ def get_producto(id):
     
 # Actualizar un producto
 @productos.route('/<int:id>', methods=['PUT'])
+@role_required(["admin"]) 
 def update_producto(id):
     producto = Producto.query.get_or_404(id)
     producto_data = request.json
@@ -129,6 +134,7 @@ def update_producto(id):
     
 # Eliminar producto
 @productos.route('/delete/<int:id>', methods=['DELETE'])
+@role_required(["admin"]) 
 def delete_producto(id):
     producto = Producto.query.get_or_404(id)
     

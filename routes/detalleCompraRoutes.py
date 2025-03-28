@@ -5,6 +5,7 @@ from models.Compra import Compra
 from funtion_jwt import validate_token
 from utils.paginador import paginar_query
 from utils.db import db
+from utils.auth_middleware import role_required
 
 detalle_compra = Blueprint('detalle_compra', __name__)
 
@@ -32,6 +33,7 @@ def actualizar_totales_compra(compra_id):
     return True
 
 @detalle_compra.route('/', methods=['GET'])
+@role_required(["admin"])  
 def get_categorias_paginated():
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=5, type=int)
@@ -42,6 +44,7 @@ def get_categorias_paginated():
 
 # Agregar un nuevo detalle de compra
 @detalle_compra.route('/add', methods=['POST'])
+@role_required(["admin"])  
 def add_detalle_compra():
     data = request.json
     
@@ -90,6 +93,7 @@ def add_detalle_compra():
 
 # Actualizar el detalle detalle de compra
 @detalle_compra.route('/update/<int:id>', methods=['PUT'])
+@role_required(["admin"])  
 def update_detalle_compra(id):
     data = request.json
     detalle = DetalleCompra.query.get_or_404(id)
@@ -106,6 +110,7 @@ def update_detalle_compra(id):
 
 # Eliminar un detella compra
 @detalle_compra.route('/delete/<int:id>', methods=['DELETE'])
+@role_required(["admin"])  
 def delete_detalle_compra(id):
     detalle = DetalleCompra.query.get_or_404(id)
     try:

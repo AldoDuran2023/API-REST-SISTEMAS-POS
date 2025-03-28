@@ -4,6 +4,7 @@ from models.Producto import Producto
 from utils.paginador import paginar_query
 from funtion_jwt import validate_token
 from utils.db import db
+from utils.auth_middleware import role_required
 
 compras = Blueprint('compras', __name__)
 
@@ -14,10 +15,12 @@ def verify_token_middleware():
 
 # Obtener las compras por paginacion
 @compras.route('/', methods=['GET'])
+@role_required(["admin"])  
 def get_categorias_paginated():
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=5, type=int)
     campos = ['id', 'proveedor_id', 'fecha_compra', 'subtotal', 'igv', 'total', 'estado']
+    
     # Obtener la consulta base
     query = Compra.query
     result = paginar_query(query, page, per_page, 'compras.get_categorias_paginated', fields=campos)
@@ -26,6 +29,7 @@ def get_categorias_paginated():
 
 # crear una nueva compra
 @compras.route('/add', methods=['POST'])
+@role_required(["admin"])  
 def add_compra():
     data = request.json
     
@@ -66,6 +70,7 @@ def add_compra():
     
 # seleccionar una compra
 @compras.route('/<int:id>', methods=['GET'])
+@role_required(["admin"])  
 def get_compra(id):
     compra = Compra.query.get_or_404(id)
     try:
@@ -87,6 +92,7 @@ def get_compra(id):
     
 # Actualizar una compra
 @compras.route('/update/<int:id>', methods=['PUT'])
+@role_required(["admin"])  
 def update_compra(id):
     compra = Compra.query.get_or_404(id)
     compra_data = request.json
@@ -114,6 +120,7 @@ def update_compra(id):
     
 # Eliminar una Compra
 @compras.route('/delete/<int:id>', methods=['DELETE'])
+@role_required(["admin"])  
 def delete_compra(id):
     compra = Compra.query.get_or_404(id)
     try:

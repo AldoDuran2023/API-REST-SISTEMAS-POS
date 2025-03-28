@@ -3,6 +3,7 @@ from models.Proveedor import Proveedor
 from utils.paginador import paginar_query
 from funtion_jwt import validate_token
 from utils.db import db
+from utils.auth_middleware import role_required
 
 proveedor = Blueprint('proveedor', __name__)
 
@@ -12,6 +13,7 @@ def verify_token_middleware():
     return validate_token(token, output=False)
 
 @proveedor.route('/', methods=['GET'])
+@role_required(["admin"])  
 def get_categorias_paginated():
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=5, type=int)
@@ -24,6 +26,7 @@ def get_categorias_paginated():
 
 # Crear un nuevo proveedor
 @proveedor.route('/add', methods=['POST'])
+@role_required(["admin"])  
 def add_proveedor():
     data = request.json
 
@@ -59,6 +62,7 @@ def add_proveedor():
 
 # Obtener un proveedor por ID
 @proveedor.route('/<int:id>', methods=['GET'])
+@role_required(["admin"])  
 def get_proveedor(id):
     try:
         proveedor = Proveedor.query.get_or_404(id)
@@ -83,6 +87,7 @@ def get_proveedor(id):
 
 # Actualizar un proveedor
 @proveedor.route('/update/<int:id>', methods=['PUT'])
+@role_required(["admin"])  
 def update_proveedor(id):
     data = request.json
     try:
@@ -105,6 +110,7 @@ def update_proveedor(id):
 
 # Eliminar un proveedor
 @proveedor.route('/delete/<int:id>', methods=['DELETE'])
+@role_required(["admin"])  
 def delete_proveedor(id):
     try:
         proveedor = Proveedor.query.get_or_404(id)

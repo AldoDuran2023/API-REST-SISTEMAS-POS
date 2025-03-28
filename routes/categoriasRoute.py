@@ -3,6 +3,7 @@ from models.Categoria import Categoria
 from funtion_jwt import validate_token
 from utils.db import db
 from utils.paginador import paginar_query
+from utils.auth_middleware import role_required
 
 categorias = Blueprint('categorias', __name__)
 
@@ -14,6 +15,7 @@ def verify_token_middleware():
     # si sale todo bien continua pero si hay un error
 
 @categorias.route('/', methods=['GET'])
+@role_required(["admin"])  
 def get_categorias_paginated():
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=5, type=int)
@@ -27,6 +29,7 @@ def get_categorias_paginated():
 
 # Añadir una nueva categoria
 @categorias.route('/add', methods=['POST'])
+@role_required(["admin"])  
 def add_categoria():
     data = request.json
     nombre = data.get('nombre')
@@ -49,6 +52,7 @@ def add_categoria():
     
 # Seleccionar una categoria
 @categorias.route('/<int:id>', methods=['GET'])
+@role_required(["admin"])  
 def get_categoria(id):
     categoria = Categoria.query.get_or_404(id)
     categoria_data = {
@@ -83,6 +87,7 @@ def update_categoria(id):
     
 # eliminar una Categoria
 @categorias.route('/<int:id>', methods=['DELETE'])
+@role_required(["admin"])  
 def delete_categoria(id):
     categoria = Categoria.query.get_or_404(id)
     db.session.delete(categoria)

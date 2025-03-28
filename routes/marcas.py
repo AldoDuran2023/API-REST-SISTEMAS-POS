@@ -3,6 +3,7 @@ from models.Marca import Marca
 from utils.db import db
 from funtion_jwt import validate_token
 from utils.paginador import paginar_query
+from utils.auth_middleware import role_required
 
 marcas = Blueprint('marcas', __name__)
 
@@ -14,6 +15,7 @@ def verify_token_middleware():
     # si sale todo bien continua pero si hay un error
 
 @marcas.route('/', methods=['GET'])
+@role_required(["admin"]) 
 def get_marcas_paginated():
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=5, type=int)
@@ -28,6 +30,7 @@ def get_marcas_paginated():
 
 # obtener marca
 @marcas.route('/<int:id>', methods=['GET'])
+@role_required(["admin"]) 
 def get_marca(id):
     marca = Marca.query.get_or_404(id)
     marca_data = {
@@ -41,6 +44,7 @@ def get_marca(id):
 
 # crear marca
 @marcas.route('/new', methods=['POST'])
+@role_required(["admin"]) 
 def add_marca():
     data = request.json
     nombre = data.get('nombre')
@@ -60,6 +64,7 @@ def add_marca():
     
 # actualziar una marca
 @marcas.route('/<int:id>', methods=['PUT'])
+@role_required(["admin"]) 
 def update_marca(id):
     marca = Marca.query.get_or_404(id)
     data = request.json
@@ -85,6 +90,7 @@ def update_marca(id):
     
 # eliminar marca
 @marcas.route('/<int:id>', methods=['DELETE'])
+@role_required(["admin"]) 
 def delete_marca(id):
     marca = Marca.query.get_or_404(id)
     db.session.delete(marca)
